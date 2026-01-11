@@ -3,3 +3,8 @@
 .idea
 .vscode
 
+# Virtual environment
+venv/
+
+# Environment variables (keep .env template in repo)
+# Note: .env is committed as a template, but should be updated with real API keys locally

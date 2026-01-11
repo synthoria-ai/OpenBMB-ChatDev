@@ -3,3 +3,8 @@
 .idea
 .vscode
 
+# Virtual environment
+venv/
+
+# Environment variables (contains API keys)
+.env

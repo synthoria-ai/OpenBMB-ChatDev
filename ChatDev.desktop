@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=ChatDev
+Comment=AI-powered software development platform
+Exec=/home/user/OpenBMB-ChatDev/chatdev-launcher.sh "Create a simple application" "MyApp"
+Icon=applications-development
+Terminal=true
+Categories=Development;
+Path=/home/user/OpenBMB-ChatDev

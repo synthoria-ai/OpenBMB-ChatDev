@@ -1,0 +1,51 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_IMAGE_NAME: "dynamic-link-in-bio"
+  DOCKER_IMAGE_TAG: "${CI_COMMIT_SHORT_SHA}"
+  CONTAINER_NAME: "dynamic-link-in-bio"
+  APP_PORT: "3000"
+  HOST_PORT: "3100"
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker info
+  script:
+    - echo "Building Docker image..."
+    # Build with increased memory if needed
+    - docker build --progress=plain -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .
+    - docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_IMAGE_NAME}:latest
+    - echo "Docker image built successfully"
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  image: docker:latest
+  before_script:
+    - apk add --no-cache openssh-client
+  script:
+    - echo "Deploying application..."
+    - docker stop ${CONTAINER_NAME} || true
+    - docker rm ${CONTAINER_NAME} || true
+    - |
+      docker run -d \
+        --name ${CONTAINER_NAME} \
+        --restart unless-stopped \
+        -p ${HOST_PORT}:${APP_PORT} \
+        -e NODE_ENV=production \
+        -e DATABASE_URL="${DATABASE_URL}" \
+        ${DOCKER_IMAGE_NAME}:latest
+    - echo "Application deployed successfully on port ${HOST_PORT}"
+    - echo "Access the application at http://3.229.129.124:${HOST_PORT}"
+  only:
+    - main
+  environment:
+    name: production
+    url: http://3.229.129.124:3100
